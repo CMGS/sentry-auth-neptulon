@@ -1,31 +1,35 @@
-Google Auth for Sentry
+Neptulon Auth for Sentry
 ======================
 
-An SSO provider for Sentry which enables Google Apps authentication.
+An SSO provider for Sentry which enables Neptulon Apps authentication.
 
 Install
 -------
 
 ::
 
-    $ pip install https://github.com/getsentry/sentry-auth-google/archive/master.zip
+    $ pip install -e git+https://github.com/CMGS/sentry-auth-neptulon#egg=sentry-auth-neptulon
 
 Setup
 -----
 
-Start by `creating a project in the Google Developers Console <https://console.developers.google.com>`_.
+Start by `creating a project in the SSO Console <https://sso.neptulon.net>`_.
 
 In the **Authorized redirect URIs** add the SSO endpoint for your installation::
 
     https://sentry.example.com/auth/sso/
 
-You will also need to enable the **Google+ API**.
-
 Finally, obtain the API keys and plug them into your ``sentry.conf.py``:
 
 .. code-block:: python
 
-    GOOGLE_CLIENT_ID = ""
+    NEPTULON_TOKEN_URL = ""
 
-    GOOGLE_CLIENT_SECRET = ""
+    NEPTULON_AUTH_URL = ""
+
+    NEPTULON_CLIENT_ID = ""
+
+    NEPTULON_CLIENT_SECRET = ""
+
+    NEPTULON_USER_DETAILS_URL = ""
 

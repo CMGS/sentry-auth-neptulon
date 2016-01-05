@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-sentry-auth-google
+sentry-auth-neptulon
 ==================
 
 :copyright: (c) 2015 GetSentry LLC
@@ -17,12 +17,12 @@ install_requires = [
 ]
 
 setup(
-    name='sentry-auth-google',
+    name='sentry-auth-neptulon',
     version='0.1.0',
-    author='David Cramer',
-    author_email='dcramer@gmail.com',
-    url='https://www.getsentry.com',
-    description='Google authentication provider for Sentry',
+    author='CMGS',
+    author_email='ilskdw@gmail.com',
+    url='https://www.neptulon.com',
+    description='Neptulon authentication provider for Sentry',
     long_description=__doc__,
     license='',
     packages=find_packages(exclude=['tests']),
@@ -33,7 +33,7 @@ setup(
     include_package_data=True,
     entry_points={
         'sentry.apps': [
-            'auth_google = sentry_auth_google',
+            'auth_neptulon = sentry_auth_neptulon',
          ],
     },
     classifiers=[

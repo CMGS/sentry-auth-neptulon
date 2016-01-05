@@ -1,28 +1,20 @@
 from __future__ import absolute_import, print_function
 
-from django.conf import settings
-from sentry.auth.providers.oauth2 import (
-    OAuth2Callback, OAuth2Provider, OAuth2Login
-)
-from urllib import urlencode
-
-from .constants import (
-    AUTHORIZE_URL, ACCESS_TOKEN_URL, CLIENT_ID, CLIENT_SECRET, SCOPE
-)
-from .views import FetchUser, GoogleConfigureView
+from sentry.auth.providers.oauth2 import OAuth2Callback, OAuth2Provider, OAuth2Login
+from .constants import AUTHORIZE_URL, ACCESS_TOKEN_URL, CLIENT_ID, CLIENT_SECRET, SCOPE
+from .views import FetchUser, NeptulonConfigureView
 
 
-class GoogleOAuth2Login(OAuth2Login):
+class NeptulonOAuth2Login(OAuth2Login):
     authorize_url = AUTHORIZE_URL
     client_id = CLIENT_ID
     scope = SCOPE
 
-    def __init__(self, domain=None):
-        self.domain = domain
-        super(GoogleOAuth2Login, self).__init__()
+    def __init__(self):
+        super(NeptulonOAuth2Login, self).__init__()
 
     def get_authorize_params(self, state, redirect_uri):
-        params = super(GoogleOAuth2Login, self).get_authorize_params(
+        params = super(NeptulonOAuth2Login, self).get_authorize_params(
             state, redirect_uri
         )
         # TODO(dcramer): ideally we could look at the current resulting state
@@ -33,27 +25,26 @@ class GoogleOAuth2Login(OAuth2Login):
         return params
 
 
-class GoogleOAuth2Provider(OAuth2Provider):
-    name = 'Google'
+class NeptulonOAuth2Provider(OAuth2Provider):
+    name = 'Neptulon'
     client_id = CLIENT_ID
     client_secret = CLIENT_SECRET
 
-    def __init__(self, domain=None, **config):
-        self.domain = domain
-        super(GoogleOAuth2Provider, self).__init__(**config)
+    def __init__(self, **config):
+        super(NeptulonOAuth2Provider, self).__init__(**config)
 
     def get_configure_view(self):
-        return GoogleConfigureView.as_view()
+        return NeptulonConfigureView.as_view()
 
     def get_auth_pipeline(self):
         return [
-            GoogleOAuth2Login(domain=self.domain),
+            NeptulonOAuth2Login(),
             OAuth2Callback(
                 access_token_url=ACCESS_TOKEN_URL,
                 client_id=self.client_id,
                 client_secret=self.client_secret,
             ),
-            FetchUser(domain=self.domain),
+            FetchUser(),
         ]
 
     def get_refresh_token_url(self):
@@ -63,9 +54,7 @@ class GoogleOAuth2Provider(OAuth2Provider):
         # TODO(dcramer): we actually want to enforce a domain here. Should that
         # be a view which does that, or should we allow this step to raise
         # validation errors?
-        return {
-            'domain': state['user']['domain'],
-        }
+        return {}
 
     def build_identity(self, state):
         # data.user => {
@@ -79,7 +68,7 @@ class GoogleOAuth2Provider(OAuth2Provider):
         return {
             'id': user_data['id'],
             # TODO: is there a "correct" email?
-            'email': user_data['emails'][0]['value'],
-            'name': user_data['displayName'],
+            'email': user_data['email'],
+            'name': user_data['name'],
             'data': self.get_oauth_data(data),
         }
